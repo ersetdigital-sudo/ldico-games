@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Checkout · LDICO Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/theme.css">
+<script src="https://cdn.moda.app/runtime-libs/tailwind-browser-4.1.13-index.global.min.js"></script><style data-moda-export-fonts="true">@font-face { font-family: 'Space Grotesk'; src: url("../../fonts/spacegrotesk-wght--light.ttf") format("truetype"); font-style: normal; font-weight: 300; font-display: swap; }
+@font-face { font-family: 'Space Grotesk'; src: url("../../fonts/spacegrotesk-wght--regular.ttf") format("truetype"); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Space Grotesk'; src: url("../../fonts/spacegrotesk-wght--medium.ttf") format("truetype"); font-style: normal; font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Space Grotesk'; src: url("../../fonts/spacegrotesk-wght--semibold.ttf") format("truetype"); font-style: normal; font-weight: 600; font-display: swap; }
+@font-face { font-family: 'Space Grotesk'; src: url("../../fonts/spacegrotesk-wght--bold.ttf") format("truetype"); font-style: normal; font-weight: 700; font-display: swap; }
+@font-face { font-family: 'Chakra Petch'; src: url("../../fonts/chakrapetch-extralight.ttf") format("truetype"); font-style: normal; font-weight: 200; font-display: swap; }
+@font-face { font-family: 'Chakra Petch'; src: url("../../fonts/chakrapetch-extralightitalic.ttf") format("truetype"); font-style: italic; font-weight: 200; font-display: swap; }
+@font-face { font-family: 'Chakra Petch'; src: url("../../fonts/chakrapetch-light.ttf") format("truetype"); font-style: normal; font-weight: 300; font-display: swap; }
+@font-face { font-family: 'Chakra Petch'; src: url("../../fonts/chakrapetch-lightitalic.ttf") format("truetype"); font-style: italic; font-weight: 300; font-display: swap; }
+@font-face { font-family: 'Chakra Petch'; src: url("../../fonts/chakrapetch-regular.ttf") format("truetype"); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Chakra Petch'; src: url("../../fonts/chakrapetch-italic.ttf") format("truetype"); font-style: italic; font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Chakra Petch'; src: url("../../fonts/chakrapetch-medium.ttf") format("truetype"); font-style: normal; font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Chakra Petch'; src: url("../../fonts/chakrapetch-mediumitalic.ttf") format("truetype"); font-style: italic; font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Chakra Petch'; src: url("../../fonts/chakrapetch-semibold.ttf") format("truetype"); font-style: normal; font-weight: 600; font-display: swap; }
+@font-face { font-family: 'Chakra Petch'; src: url("../../fonts/chakrapetch-semibolditalic.ttf") format("truetype"); font-style: italic; font-weight: 600; font-display: swap; }
+@font-face { font-family: 'Chakra Petch'; src: url("../../fonts/chakrapetch-bold.ttf") format("truetype"); font-style: normal; font-weight: 700; font-display: swap; }
+@font-face { font-family: 'Chakra Petch'; src: url("../../fonts/chakrapetch-bolditalic.ttf") format("truetype"); font-style: italic; font-weight: 700; font-display: swap; }</style></head><body>
+<div hidden="" id="imgs"><img data-k="ml" src="../../images/d9f67387-cdcf-4dc2-a702-3196ecead3eb.png" alt=""><img data-k="ff" src="../../images/152d1801-110c-4368-9f81-33303d92581e.png" alt=""><img data-k="pubg" src="../../images/7efa26c9-bbe5-4810-b707-272d9b59c71f.png" alt=""><img data-k="gi" src="../../images/0f5c74f3-00ca-457e-9c7b-160a822b7378.png" alt=""><img data-k="val" src="../../images/bbaedcec-b7c5-4cb0-b931-ac6ea9b9d8ca.png" alt=""><img data-k="hok" src="../../images/51fbeb56-2cf8-4519-b251-6dec006bb443.png" alt=""><img data-k="hsr" src="../../images/458868b6-dc7c-4ca0-9ee6-e8309e7a1b7c.png" alt=""><img data-k="cod" src="../../images/15ba7064-fdbc-4686-966a-669fccfeab68.png" alt=""><img data-k="aov" src="../../images/d667e21a-fa98-47fb-82c9-de3d59425c1a.png" alt=""><img data-k="steam" src="../../images/6c6bdd31-d679-4191-8b13-d0941e8db3fc.png" alt=""><img data-k="gplay" src="../../images/eeb5dce8-92c2-47b3-a54a-0f4ace569c2d.png" alt=""><img data-k="roblox" src="../../images/82160379-5550-4145-9270-07d0dbff0c3d.png" alt=""></div>
+<header class="sticky top-0 z-50 bg-[var(--bg)]/85 backdrop-blur border-b border-[var(--line)]">
+  <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between gap-4">
+    <a href="/"><span class="flex items-center gap-3" aria-label="LDICO Games"><svg width="38" height="38" viewBox="0 0 48 48"><defs><linearGradient id="lgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C6FF00"></stop><stop offset="1" stop-color="#22D3EE"></stop></linearGradient></defs><rect width="48" height="48" rx="14" fill="url(#lgA)"></rect><path d="M14 12v24h12" stroke="#07070c" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"></path><path d="M27 15l10 7-10 7z" fill="#07070c"></path><circle cx="35" cy="35" r="3" fill="#8B5CF6"></circle></svg><span class="leading-none"><span class="dp block font-bold tracking-wider text-xl">LDIC<span class="text-transparent bg-clip-text bg-gradient-to-r from-[#C6FF00] to-[#22D3EE]">O</span></span><span class="block text-[9px] tracking-[.5em] text-[var(--mut)] mt-1">GAMES</span></span></span></a>
+    <nav class="flex gap-4 sm:gap-6 text-sm text-[var(--mut)]"><a href="/#games" class="hover:text-white">Games</a><a href="/lacak" class="hover:text-white">Lacak</a><a href="/pembayaran" class="hover:text-white">Pembayaran</a></nav>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-5 py-10">
+  <div class="flex flex-wrap items-center gap-2 text-xs dp mb-8"><span class="text-[var(--lime)]">1. Detail</span><span class="text-[var(--line)]">—</span><span class="text-[var(--lime)]">2. Checkout</span><span class="text-[var(--line)]">—</span><span class="text-[var(--mut)]">3. Invoice</span></div>
+  <h1 class="dp text-4xl font-bold mb-8">Checkout</h1>
+  <div class="grid lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2 space-y-6">
+      <div class="cut bg-[var(--panel)] border border-[var(--line)] p-6 flex gap-5 items-center">
+        <div id="thumb" class="cut-sm w-20 h-20 bg-cover bg-center shrink-0"></div>
+        <div class="flex-1"><div id="cname" class="dp text-xl font-bold"></div><div id="citem" class="text-[var(--lime)] text-sm"></div><div id="cf" class="text-xs text-[var(--mut)] mt-1"></div></div>
+        <a id="edit" class="text-xs text-[var(--mut)] underline">Ubah</a>
+      </div>
+      <div class="cut bg-[var(--panel)] border border-[var(--line)] p-6"><div class="dp text-sm mb-4">Kontak (untuk bukti transaksi)</div><div class="grid sm:grid-cols-2 gap-3"><input id="wa" class="inp cut-sm" placeholder="No. WhatsApp"><input class="inp cut-sm" placeholder="Email (opsional)"></div></div>
+      <div class="cut bg-[var(--panel)] border border-[var(--line)] p-6"><div class="dp text-sm mb-4">Metode pembayaran</div><div id="pays" class="space-y-5"></div></div>
+    </div>
+    <aside class="lg:sticky lg:top-24 h-fit cut glow bg-[var(--bg)] p-6">
+      <div class="dp text-sm mb-4">Rincian pembayaran</div>
+      <div class="flex gap-2 mb-5"><input id="promo" class="inp cut-sm text-sm min-w-0" placeholder="Kode promo"><button id="ap" class="cut-sm dp bg-white text-black font-bold px-4 text-sm">Pakai</button></div>
+      <p id="pmsg" class="text-xs -mt-3 mb-4"></p>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between"><span class="text-[var(--mut)]">Harga</span><span id="r1"></span></div>
+        <div class="flex justify-between"><span class="text-[var(--mut)]">Biaya layanan</span><span id="r2"></span></div>
+        <div class="flex justify-between"><span class="text-[var(--mut)]">Diskon</span><span id="r3" class="text-[var(--lime)]"></span></div>
+      </div>
+      <div class="border-t border-[var(--line)] my-4"></div>
+      <div class="text-xs text-[var(--mut)]">Total</div><div id="r4" class="dp text-3xl font-bold"></div>
+      <p id="err" class="text-xs text-red-400 mt-3 hidden">Isi No. WhatsApp &amp; pilih metode bayar.</p>
+      <button id="pay" class="cut-sm dp w-full mt-5 bg-[var(--lime)] text-black font-bold py-4">Bayar Sekarang</button>
+      <p class="text-[11px] text-[var(--mut)] mt-3 text-center">Dengan membayar kamu setuju dengan Syarat &amp; Ketentuan.</p>
+    </aside>
+  </div>
+</main>
+<footer class="border-t border-[var(--line)] mt-20"><p class="text-center text-xs text-[var(--mut)] py-8">© 2026 LDICO Games · Butuh bantuan? CS online 24/7</p></footer>
+<script src="/assets/data.js"></script>
+<script>
+const o=(Q.get('o')&&dec(Q.get('o')))||SS.get('ldico_order')||{k:'ml',i:1,f:[['User ID','12345678'],['Zone ID','1234']]};
+const s=S[o.k],it=s.no[o.i],[a,b]=s.g.split(',');let m=null,disc=0;
+const im=imgOf(o.k);thumb.style.backgroundImage=im?`url(${im})`:`linear-gradient(135deg,${a},${b})`;
+cname.textContent=s.n;citem.textContent=it[0];cf.textContent=o.f.map(x=>x[0]+': '+x[1]).join(' · ');edit.href='/layanan?g='+o.k;
+const grp={};Object.entries(PAY).forEach(([n,[f,g]])=>(grp[g]=grp[g]||[]).push([n,f]));
+pays.innerHTML=Object.entries(grp).map(([g,l])=>`<div><div class="text-xs text-[var(--mut)] mb-2">${g}</div><div class="grid grid-cols-2 sm:grid-cols-3 gap-2">${l.map(([n,f])=>`<button class="pm cut-sm border border-[var(--line)] bg-[var(--bg)] p-3 text-left" data-m="${n}"><div class="dp font-semibold text-sm">${n}</div><div class="text-[11px] opacity-70">${f==0?'Gratis biaya':f<1?'Biaya '+(f*100)+'%':'Biaya '+rp(f)}</div></button>`).join('')}</div></div>`).join('');
+function calc(){const f=m?feeOf(m,it[1]):0,t=it[1]+f-disc;r1.textContent=rp(it[1]);r2.textContent=m?rp(f):'-';r3.textContent=disc?'-'+rp(disc):'-';r4.textContent=rp(t);return{f,t}}
+calc();
+document.querySelectorAll('.pm').forEach(e=>e.onclick=()=>{document.querySelectorAll('.pm').forEach(x=>x.classList.remove('on'));e.classList.add('on');m=e.dataset.m;calc()});
+ap.onclick=()=>{const c=PROMO[promo.value.trim().toUpperCase()];if(c&&(!c.k||c.k==o.k)){disc=Math.min(it[1]*c.p,c.max);pmsg.textContent='Promo dipakai ✓';pmsg.className='text-xs -mt-3 mb-4 text-[var(--lime)]'}else{disc=0;pmsg.textContent='Kode tidak valid untuk layanan ini';pmsg.className='text-xs -mt-3 mb-4 text-red-400'}calc()};
+pay.onclick=()=>{if(!m||!wa.value.trim()){err.classList.remove('hidden');return}const c=calc(),inv='LDC-'+Date.now().toString().slice(-8);
+const rec={...o,inv,m,fee:c.f,disc,total:c.t,wa:wa.value,ts:Date.now(),st:0};SS.set('ldico_inv',rec);HIST.save(rec);go2('/invoice?no='+inv+'&d='+enc(rec))};
+</script>
+</body></html>

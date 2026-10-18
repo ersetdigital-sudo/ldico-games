@@ -1,26 +1,198 @@
 @import "tailwindcss";
 
+/*
+  LDICO Games — token visual.
+  Palet & tipografi dipertahankan dari HTML asli supaya identitas brand tidak berubah.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #07070c;
+  --panel: #10101a;
+  --line: #22222f;
+  --lime: #c6ff00;
+  --vio: #8b5cf6;
+  --cy: #22d3ee;
+  --mut: #8a8aa3;
+  --fg: #ececf5;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-space-grotesk), system-ui, Arial, sans-serif;
+  --font-display: var(--font-chakra-petch), system-ui, Arial, sans-serif;
+
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-line: var(--line);
+  --color-acid: var(--lime);
+  --color-vio: var(--vio);
+  --color-cy: var(--cy);
+  --color-mut: var(--mut);
+  --color-fg: var(--fg);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+  /* `clip` menggantikan `hidden` supaya header sticky tetap menempel:
+     overflow:hidden pada body membuat body jadi scroll container. */
+  overflow-x: clip;
+  max-width: 100%;
+  overscroll-behavior-x: none;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  touch-action: pan-y;
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+/* Display type: Chakra Petch uppercase, dipakai untuk heading & label. */
+.dp {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Bentuk khas LDICO: sudut terpotong diagonal. */
+.cut {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 18px) 0,
+    100% 18px,
+    100% 100%,
+    18px 100%,
+    0 calc(100% - 18px)
+  );
+}
+
+.cut-sm {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% 100%,
+    10px 100%,
+    0 calc(100% - 10px)
+  );
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at 50% 30%, #000 30%, transparent 75%);
+}
+
+.glow {
+  box-shadow:
+    0 0 0 1px var(--lime),
+    0 0 30px -6px var(--lime);
+}
+
+.scan {
+  background: linear-gradient(transparent 50%, rgba(255, 255, 255, 0.03) 50%);
+  background-size: 100% 4px;
+}
+
+/* Kartu katalog */
+.gc {
+  transition:
+    transform 0.25s,
+    border-color 0.25s;
+}
+.gc:hover {
+  transform: translateY(-6px);
+  border-color: var(--lime);
+}
+
+/* Input seragam untuk form checkout & lacak */
+.inp {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 0.85rem 1rem;
+  outline: none;
+  width: 100%;
+}
+.inp:focus,
+.inp:focus-visible {
+  border-color: var(--lime);
+}
+
+/* State terpilih untuk chip, tab, dan kartu nominal */
+.option.is-active {
+  background: var(--lime);
+  color: #07070c;
+  border-color: var(--lime);
+}
+
+details[open] .pl {
+  transform: rotate(45deg);
+}
+
+summary {
+  list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Pita nama layanan yang berjalan (marquee). Dua salinan isi dipakai supaya
+   pergeseran -50% menyambung tanpa jeda. */
+.marq {
+  display: flex;
+  width: max-content;
+  animation: mq 40s linear infinite;
+}
+
+@keyframes mq {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.blink {
+  animation: pulse2 1.4s infinite;
+}
+
+@keyframes pulse2 {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* Fokus keyboard: terlihat jelas di atas background gelap.
+   `transition: none` supaya cincin fokus langsung muncul — tanpa itu, utility
+   `transition` bawaan Tailwind ikut menganimasikan `outline-color`. */
+:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 2px;
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .blink,
+  .gc,
+  .marq {
+    animation: none;
+    transition: none;
+  }
+  .gc:hover {
+    transform: none;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
 }
