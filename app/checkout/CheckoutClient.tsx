@@ -6,29 +6,20 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { DEFAULT_SERVICE_KEY, SERVICES } from "@/data/services";
 import { servicePath } from "@/data/categories";
-import { feeOf, paymentsByGroup, type PaymentGroup } from "@/data/payments";
 import { findPromo } from "@/data/promos";
 import { HERO_PREFIX, Money } from "@/components/site/Money";
-import { Icon, type IconName } from "@/components/site/Icon";
+import { Icon } from "@/components/site/Icon";
 import {
   CHECKOUT_FALLBACK,
-  createInvoiceNumber,
   invoiceTotal,
-  type InvoiceRecord,
   type OrderDraft,
 } from "@/lib/order";
-import { encodeOrder } from "@/lib/codec";
-import { draftStorage, historyStorage, invoiceStorage } from "@/lib/storage";
+import { createOrder } from "@/lib/db/client";
+import { toPublicError } from "@/lib/db/errors";
+import { saveRef } from "@/lib/refs";
+import { draftStorage } from "@/lib/storage";
 import { ServiceThumb } from "@/components/site/ServiceThumb";
 import { StepIndicator } from "@/components/site/StepIndicator";
-
-/** Ikon kartu metode bayar, satu per grup (bukan per metode). */
-const PAYMENT_ICON: Record<PaymentGroup, IconName> = {
-  "E-Wallet & Bank": "qr",
-  "E-Wallet": "banknote",
-  "Virtual Account": "card",
-  "Gerai Retail": "store",
-};
 
 /** Biaya ditulis apa adanya: persen atau nominal rupiah. */
 function FeeText({ fee }: { fee: number }) {
@@ -41,14 +32,36 @@ function FeeText({ fee }: { fee: number }) {
   );
 }
 
-export function CheckoutClient({ initialOrder }: { initialOrder: OrderDraft | null }) {
+type CatalogEntry = {
+  serviceId: string;
+  fields: { key: string; label: string }[];
+  products: { id: string; name: string; price: number }[];
+};
+
+type CheckoutMethod = { id: string; name: string; fee: number };
+
+export function CheckoutClient({
+  initialOrder,
+  catalog,
+  methods,
+  brandSlug,
+}: {
+  initialOrder: OrderDraft | null;
+  catalog: Record<string, CatalogEntry>;
+  methods: CheckoutMethod[];
+  brandSlug: string;
+}) {
   const router = useRouter();
   const [order, setOrder] = useState<OrderDraft>(initialOrder ?? CHECKOUT_FALLBACK);
-  const [method, setMethod] = useState<string | null>(initialOrder?.m ?? null);
+  const [method, setMethod] = useState<string | null>(
+    initialOrder?.m ?? methods[0]?.name ?? null,
+  );
   const [promoInput, setPromoInput] = useState("");
   const [discount, setDiscount] = useState(0);
   const [promoMessage, setPromoMessage] = useState<{ text: string; ok: boolean } | null>(null);
   const [error, setError] = useState(false);
+  const [payError, setPayError] = useState("");
+  const [pending, setPending] = useState(false);
 
   // Kalau URL tidak membawa order (mis. halaman di-refresh), ambil dari session.
   useEffect(() => {
@@ -62,11 +75,10 @@ export function CheckoutClient({ initialOrder }: { initialOrder: OrderDraft | nu
 
   const service = SERVICES[order.k] ?? SERVICES[DEFAULT_SERVICE_KEY];
   const pack = service.packages[order.i] ?? service.packages[0];
-  const fee = method ? feeOf(method, pack.price) : 0;
+  const methodDef = methods.find((item) => item.name === method);
+  const fee = methodDef?.fee ?? 0;
   const clampedDiscount = Math.min(discount, pack.price);
   const total = invoiceTotal(pack.price, fee, clampedDiscount);
-
-  const paymentGroups = useMemo(() => paymentsByGroup(), []);
 
   const applyPromo = () => {
     const promo = findPromo(promoInput, order.k);
@@ -79,26 +91,55 @@ export function CheckoutClient({ initialOrder }: { initialOrder: OrderDraft | nu
     setPromoMessage({ text: "Promo dipakai ✓", ok: true });
   };
 
-  const handlePay = () => {
-    if (!method) {
+  const handlePay = async () => {
+    if (!methodDef) {
       setError(true);
       return;
     }
-    const now = Date.now();
-    const invoiceNumber = createInvoiceNumber(now);
-    const record: InvoiceRecord = {
-      ...order,
-      inv: invoiceNumber,
-      m: method,
-      fee,
-      disc: clampedDiscount,
-      total,
-      ts: now,
-      st: 0,
-    };
-    invoiceStorage.set(record);
-    historyStorage.save(record);
-    router.push(`/invoice?no=${invoiceNumber}&d=${encodeOrder(record)}`);
+    const entry = catalog[order.k];
+    if (!entry) {
+      setPayError("Layanan ini belum tersedia. Coba pilih layanan lain.");
+      return;
+    }
+    const product =
+      entry.products.find((item) => item.name === pack.name) ??
+      entry.products[order.i];
+    if (!product) {
+      setPayError("Nominal ini belum tersedia. Coba pilih nominal lain.");
+      return;
+    }
+
+    const input: Record<string, string> = {};
+    for (const [label, value] of order.f) {
+      const field = entry.fields.find((item) => item.label === label);
+      const key =
+        field?.key ??
+        label.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+      input[key || "tujuan"] = value;
+    }
+    const nomorTujuan = order.f[0]?.[1]?.trim() ?? "";
+
+    setError(false);
+    setPayError("");
+    setPending(true);
+    try {
+      const created = await createOrder({
+        brandSlug,
+        serviceId: entry.serviceId,
+        productId: product.id,
+        nomorTujuan,
+        input,
+        paymentMethodId: methodDef.id,
+        voucherCode: promoMessage?.ok
+          ? promoInput.trim().toUpperCase()
+          : null,
+      });
+      saveRef(created.ref);
+      router.push(`/invoice?ref=${encodeURIComponent(created.ref)}`);
+    } catch (caught) {
+      setPayError(toPublicError(caught).message);
+      setPending(false);
+    }
   };
 
   return (
@@ -127,61 +168,52 @@ export function CheckoutClient({ initialOrder }: { initialOrder: OrderDraft | nu
 
           <section className="cut border border-[var(--line)] bg-[var(--panel)] p-6">
             <h2 className="dp mb-4 text-sm">Metode pembayaran</h2>
-            <div className="space-y-5">
-              {paymentGroups.map(({ group, methods }) => (
-                <div key={group}>
-                  <h3 className="mb-2 text-xs text-[var(--mut)]">{group}</h3>
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {methods.map((payment) => {
-                      const active = method === payment.name;
-                      return (
-                        <motion.button
-                          key={payment.name}
-                          type="button"
-                          whileTap={{ scale: 0.99 }}
-                          onClick={() => {
-                            setMethod(payment.name);
-                            setError(false);
-                          }}
-                          aria-pressed={active}
-                          className={`option cut-sm flex w-full items-center gap-3 border border-[var(--line)] bg-[var(--bg)] p-3 text-left transition ${
-                            active ? "is-active" : "hover:border-[var(--lime)]"
-                          }`}
-                        >
-                          {/* Sama seperti grid PPOB: saat terpilih latarnya lime, jadi
-                              tile ikon dibalik jadi hitam–lime biar tetap terlihat. */}
-                          <span
-                            className={`flex h-10 w-12 shrink-0 items-center justify-center border transition ${
-                              active
-                                ? "border-[#07070c] bg-[#07070c] text-[var(--lime)]"
-                                : "border-[var(--line)] text-[var(--mut)]"
-                            }`}
-                          >
-                            <Icon name={PAYMENT_ICON[group]} className="h-5 w-5" />
-                          </span>
-                          <span className="min-w-0 flex-1">
-                            <span className="dp block truncate text-sm font-semibold">
-                              {payment.name}
-                            </span>
-                            <span className="block text-[11px] opacity-70">
-                              <FeeText fee={payment.fee} />
-                            </span>
-                          </span>
-                          {/* Penanda pilihan; barisnya sendiri sudah `aria-pressed`. */}
-                          <span
-                            aria-hidden="true"
-                            className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center border ${
-                              active ? "border-[#07070c]" : "border-[var(--mut)]"
-                            }`}
-                          >
-                            {active && <span className="h-2 w-2 bg-[#07070c]" />}
-                          </span>
-                        </motion.button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+            <div className="grid gap-2 sm:grid-cols-2">
+              {methods.map((payment) => {
+                const active = method === payment.name;
+                return (
+                  <motion.button
+                    key={payment.id}
+                    type="button"
+                    whileTap={{ scale: 0.99 }}
+                    onClick={() => {
+                      setMethod(payment.name);
+                      setError(false);
+                      setPayError("");
+                    }}
+                    aria-pressed={active}
+                    className={`option cut-sm flex w-full items-center gap-3 border border-[var(--line)] bg-[var(--bg)] p-3 text-left transition ${
+                      active ? "is-active" : "hover:border-[var(--lime)]"
+                    }`}
+                  >
+                    <span
+                      className={`flex h-10 w-12 shrink-0 items-center justify-center border transition ${
+                        active
+                          ? "border-[#07070c] bg-[#07070c] text-[var(--lime)]"
+                          : "border-[var(--line)] text-[var(--mut)]"
+                      }`}
+                    >
+                      <Icon name="qr" className="h-5 w-5" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="dp block truncate text-sm font-semibold">
+                        {payment.name}
+                      </span>
+                      <span className="block text-[11px] opacity-70">
+                        <FeeText fee={payment.fee} />
+                      </span>
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center border ${
+                        active ? "border-[#07070c]" : "border-[var(--mut)]"
+                      }`}
+                    >
+                      {active && <span className="h-2 w-2 bg-[#07070c]" />}
+                    </span>
+                  </motion.button>
+                );
+              })}
             </div>
           </section>
         </div>
@@ -253,11 +285,17 @@ export function CheckoutClient({ initialOrder }: { initialOrder: OrderDraft | nu
               Pilih metode bayar dulu.
             </p>
           )}
+          {payError && (
+            <p role="alert" className="mt-3 text-xs text-red-400">
+              {payError}
+            </p>
+          )}
 
           <button
             type="button"
-            onClick={handlePay}
-            className="cut-sm dp mt-5 w-full bg-[var(--lime)] py-4 font-bold text-black transition hover:brightness-110"
+            onClick={() => void handlePay()}
+            disabled={pending}
+            className="cut-sm dp mt-5 w-full bg-[var(--lime)] py-4 font-bold text-black transition hover:brightness-110 disabled:opacity-60"
           >
             Bayar Sekarang
           </button>

@@ -28,7 +28,10 @@ async function LacakDetail({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
-  return <LacakClient initialInvoiceNumber={firstParam(params.no)} />;
+  return <LacakClient
+    initialInvoiceNumber={firstParam(params.no)}
+    brandSlug={process.env.BRAND_SLUG ?? ""}
+  />;
 }
 
 export default function Page({ searchParams }: PageProps) {

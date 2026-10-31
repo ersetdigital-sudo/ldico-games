@@ -19,8 +19,6 @@ type SearchParams = Record<string, string | string[] | undefined>;
  * Isi halaman bergantung penuh pada `params` (slug game). Dibiarkan blocking
  * (`instant = false`) supaya HTML-nya lengkap sejak byte pertama.
  */
-export const instant = false;
-
 export function generateStaticParams() {
   return GAME_LIST.map((game) => ({ game: game.key }));
 }

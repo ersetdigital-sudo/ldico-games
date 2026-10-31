@@ -20,8 +20,6 @@ type SearchParams = Record<string, string | string[] | undefined>;
  * permintaan URL-nya memang harus selesai dulu sebelum halaman dirender —
  * langsung set `instant = false` daripada memaksa kerangka kosong.
  */
-export const instant = false;
-
 /**
  * Halaman kategori PPOB — kedalaman kedua setelah daftar 9 kategori.
  * Isinya: judul besar, deskripsi, navigasi kategori, dan area transaksi.

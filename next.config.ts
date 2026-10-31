@@ -12,8 +12,6 @@ const nextConfig: NextConfig = {
       },
     },
   },
-  cacheComponents: true,
-  partialPrefetching: true,
   images: {
     // Next 16 wajib mendaftarkan nilai quality yang dipakai (default hanya [75]).
     // 90 dipakai untuk gambar showcase di hero.
